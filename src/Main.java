@@ -1,9 +1,10 @@
-import java.util.Scanner;
+//javac Main.java MarkovChainGenerator.java
+//java Main < 1.in
 
 public class Main {
 
     public static void main(String[] args) {
-        MarkovCainCreator markovCainCreator = new MarkovCainCreator(System.in);
-        System.out.println(markovCainCreator.textGenerator());
+        MarkovChainCreator markovChainCreator = new MarkovChainCreator(System.in);
+        System.out.println(markovChainCreator.textGenerator());
     }
 }

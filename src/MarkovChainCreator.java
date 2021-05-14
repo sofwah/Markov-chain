@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
-public class MarkovCainCreator {
+public class MarkovChainCreator {
     private Scanner scanner;
     private int maxLength = 280;
     private String firstWord;
@@ -18,7 +18,7 @@ public class MarkovCainCreator {
     private ArrayList<String> possibilities;
     private StringBuffer sb;
 
-    public MarkovCainCreator (InputStream file) {
+    public MarkovChainCreator(InputStream file) {
         scanner = new Scanner(file);
     }
 
