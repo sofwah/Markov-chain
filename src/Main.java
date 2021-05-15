@@ -19,7 +19,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             markovString = markovChainCreator.generateText();
 
             try {

@@ -68,18 +68,23 @@ public class MarkovChainCreator {
                 }
 
                 possibilities = wordMap.get(currentString);
-                nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random
+                if (currentString.endsWith(".") || currentString.endsWith("?") || currentString.endsWith("!")) {
+                    nextString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
+                } else {
+                    nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random
+                }
+
                 resultString += " " + nextString;
 
                 if (resultString.length() > maxLength) {
-                    if (backupResultString.endsWith(".")) {
+                    /*if (backupResultString.endsWith(".")) {
                         sb = new StringBuffer(backupResultString);
                         sb.deleteCharAt(sb.length() - 1);
                         backupResultString = sb.toString();
                     }
-                    if ((backupResultString.split(" ").length <= 1) && (Math.random() < 0.20)) { // 20% chans att man accepterar ett ord
+                    if ((backupResultString.split(" ").length <= 1) && (Math.random() < 0.10)) { // 10% chans att man accepterar ett ord
                         return backupResultString;
-                    }
+                    }*/
                     break;
                 }
 
@@ -88,7 +93,7 @@ public class MarkovChainCreator {
                     sb.deleteCharAt(sb.length() - 1);
                     resultString = sb.toString();
 
-                    if ((resultString.split(" ").length <= 1) && (Math.random() < 0.20)) { // 20% chans att man accepterar ett ord
+                    if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
                         return resultString;
                     }
                     break;
@@ -102,7 +107,7 @@ public class MarkovChainCreator {
                 sb.deleteCharAt(sb.length()-1);
                 resultString = sb.toString();
             }
-            if ((resultString.split(" ").length <= 1) && (Math.random() < 0.20)) { // 20% chans att man accepterar ett ord
+            if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
                 return resultString;
             }
             break;
