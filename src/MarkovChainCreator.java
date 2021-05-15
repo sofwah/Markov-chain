@@ -17,92 +17,97 @@ public class MarkovChainCreator {
     private String backupResultString;
     private ArrayList<String> possibilities;
     private StringBuffer sb;
+    private boolean doAgain;
 
     public MarkovChainCreator(InputStream file) {
         scanner = new Scanner(file);
     }
 
-    public void MarkovChain() {
+    public void createMarkovChain() {
+
         firstWord = scanner.next();
-        sentenceStarters.add(firstWord);
 
         while (scanner.hasNext()) {
             secondWord = scanner.next();
 
-            if (firstWord.endsWith(".")) {
-                sentenceStarters.add(firstWord); //om föregående ord slutar med punkt är nästa ord en meningsstartare
-            }
-
             if (scanner.hasNext()) {
                 thirdWord = scanner.next();
-                combinedWords = secondWord + " " + thirdWord;
+                if (secondWord.endsWith(".") || secondWord.endsWith("!") || secondWord.endsWith("?")) {
+                    combinedWords = secondWord;
+                } else {
+                    combinedWords = secondWord + " " + thirdWord;
+                }
 
                 if (!wordMap.containsKey(firstWord)) {
                     wordMap.put(firstWord, new ArrayList<>());
                 }
                 wordMap.get(firstWord).add(combinedWords);
+
+                if (firstWord.endsWith(".") || firstWord.endsWith("!") || firstWord.endsWith("?")) {
+                    sentenceStarters.add(secondWord); //om föregående ord slutar med punkt är nästa ord en meningsstartare
+                }
+
                 firstWord = thirdWord;
             }
         }
     }
 
-    public String textGenerator() {
-        currentString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
-        resultString = currentString;
+    public String generateText() { // gives only one word pretty often
+        doAgain = true;
 
-        while (resultString.length() <= maxLength) {
-            backupResultString = resultString; // keeping a backup of resultString in case text gets too long
-            possibilities = wordMap.get(currentString);
-            nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random
-            resultString += " " + nextString;
+        while (doAgain) { //re-do the text until okay
 
-            if (resultString.length() > maxLength) {
-                if (backupResultString.endsWith(".")) {
-                    sb = new StringBuffer(backupResultString);
-                    sb.deleteCharAt(sb.length() - 1);
-                    backupResultString = sb.toString();
+            currentString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
+            resultString = currentString;
+
+            while (resultString.length() <= maxLength) {
+                backupResultString = resultString; // keeping a backup of resultString in case text gets too long
+
+                if (!wordMap.containsKey(currentString)) { //fixed nullPointerException
+                    break;
                 }
-                return backupResultString;
+
+                possibilities = wordMap.get(currentString);
+                nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random
+                resultString += " " + nextString;
+
+                if (resultString.length() > maxLength) {
+                    if (backupResultString.endsWith(".")) {
+                        sb = new StringBuffer(backupResultString);
+                        sb.deleteCharAt(sb.length() - 1);
+                        backupResultString = sb.toString();
+                    }
+                    if ((backupResultString.split(" ").length <= 1) && (Math.random() < 0.20)) { // 20% chans att man accepterar ett ord
+                        return backupResultString;
+                    }
+                    break;
+                }
+
+                if ((resultString.endsWith(".") || resultString.endsWith("!") || resultString.endsWith("?")) && (Math.random() < 0.80)) { // 20% chance that it continues after one sentence
+                    sb = new StringBuffer(resultString);
+                    sb.deleteCharAt(sb.length() - 1);
+                    resultString = sb.toString();
+
+                    if ((resultString.split(" ").length <= 1) && (Math.random() < 0.20)) { // 20% chans att man accepterar ett ord
+                        return resultString;
+                    }
+                    break;
+                }
+
+                currentString = resultString.substring(resultString.lastIndexOf(" ") + 1);
             }
 
-            currentString = resultString.substring(resultString.lastIndexOf(" ")+1);;
+            if (resultString.endsWith(".")) {
+                sb = new StringBuffer(resultString);
+                sb.deleteCharAt(sb.length()-1);
+                resultString = sb.toString();
+            }
+            if ((resultString.split(" ").length <= 1) && (Math.random() < 0.20)) { // 20% chans att man accepterar ett ord
+                return resultString;
+            }
+            break;
         }
 
-        if (resultString.endsWith(".")) {
-            sb = new StringBuffer(resultString);
-            sb.deleteCharAt(sb.length()-1);
-            resultString = sb.toString();
-        }
         return resultString;
     }
-
-    /*
-    public void recursiveTextGenerator() {
-
-    }
-
-    public boolean recursiveTextGeneratorHelper(String resultString) {
-        if (resultString.length() > maxLength) {
-            return false;
-        }
-
-        if (recursiveTextGeneratorHelper(resultString)) {
-
-        }
-        if (row == 9) {
-            return true;
-        }
-        if (matrix[row][col] != 0) { //kolla om ifylld siffra
-            return solve(row, col + 1);
-        }
-        for (int number = 1; number < 10; number++) {
-            if (put(number, row, col)) {
-                if (solve(row, col + 1)) {
-                    return true;
-                }
-            }
-        }
-        remove(row, col);
-        return false;
-    }*/
 }
