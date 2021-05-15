@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -14,10 +13,10 @@ public class MarkovChainCreator {
     private String currentString;
     private String nextString;
     private String resultString;
-    private String backupResultString;
     private ArrayList<String> possibilities;
     private StringBuffer sb;
     private boolean doAgain;
+    private String returnString;
 
     public MarkovChainCreator(InputStream file) {
         scanner = new Scanner(file);
@@ -52,67 +51,63 @@ public class MarkovChainCreator {
         }
     }
 
-    public String generateText() { // gives only one word pretty often
-        doAgain = true;
+    public String generateText() {
+        returnString = generateTextHelper();
+        while ((resultString.split(" ").length <= 1) || (resultString.split(" ").length > 280)) {
+            returnString = generateTextHelper();
+            if ((resultString.split(" ").length <= 280) && (Math.random() < 0.05)) { // sometimes lets through one word outputs (5% of the times)
+                break;
+            }
+        }
+        return resultString;
+    }
 
-        while (doAgain) { //re-do the text until okay
+    public String generateTextHelper() { // gives only one word pretty often
+        currentString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
+        resultString = currentString;
 
-            currentString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
-            resultString = currentString;
+        while (resultString.length() <= maxLength) {
 
-            while (resultString.length() <= maxLength) {
-                backupResultString = resultString; // keeping a backup of resultString in case text gets too long
-
-                if (!wordMap.containsKey(currentString)) { //fixed nullPointerException
-                    break;
-                }
-
-                possibilities = wordMap.get(currentString);
-                if (currentString.endsWith(".") || currentString.endsWith("?") || currentString.endsWith("!")) {
-                    nextString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
-                } else {
-                    nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random
-                }
-
-                resultString += " " + nextString;
-
-                if (resultString.length() > maxLength) {
-                    /*if (backupResultString.endsWith(".")) {
-                        sb = new StringBuffer(backupResultString);
-                        sb.deleteCharAt(sb.length() - 1);
-                        backupResultString = sb.toString();
-                    }
-                    if ((backupResultString.split(" ").length <= 1) && (Math.random() < 0.10)) { // 10% chans att man accepterar ett ord
-                        return backupResultString;
-                    }*/
-                    break;
-                }
-
-                if ((resultString.endsWith(".") || resultString.endsWith("!") || resultString.endsWith("?")) && (Math.random() < 0.80)) { // 20% chance that it continues after one sentence
-                    sb = new StringBuffer(resultString);
-                    sb.deleteCharAt(sb.length() - 1);
-                    resultString = sb.toString();
-
-                    if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
-                        return resultString;
-                    }
-                    break;
-                }
-
-                currentString = resultString.substring(resultString.lastIndexOf(" ") + 1);
+            if (!wordMap.containsKey(currentString)) { //fixed nullPointerException
+                break;
             }
 
-            if (resultString.endsWith(".")) {
+            possibilities = wordMap.get(currentString);
+            if (currentString.endsWith(".") || currentString.endsWith("?") || currentString.endsWith("!")) {
+                nextString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
+            } else {
+                nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random startare
+            }
+
+            resultString += " " + nextString;
+
+            if (resultString.length() > maxLength) {
+                break;
+            }
+
+            if ((resultString.endsWith(".") || resultString.endsWith("!") || resultString.endsWith("?")) && (Math.random() < 0.80)) { // 20% chance that it continues after one sentence
                 sb = new StringBuffer(resultString);
-                sb.deleteCharAt(sb.length()-1);
+                sb.deleteCharAt(sb.length() - 1);
                 resultString = sb.toString();
+                /*
+                if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
+                    return resultString;
+                } gets checked in textGenerator()*/
+                break;
             }
-            if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
-                return resultString;
-            }
-            break;
+
+            currentString = resultString.substring(resultString.lastIndexOf(" ") + 1);
         }
 
+        if (resultString.endsWith(".")) {
+            sb = new StringBuffer(resultString);
+            sb.deleteCharAt(sb.length()-1);
+            resultString = sb.toString();
+        }
+        /*
+        if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
+            return resultString;
+        } gets checked in textGenerator()*/
         return resultString;
     }
 }
