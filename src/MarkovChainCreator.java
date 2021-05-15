@@ -15,7 +15,6 @@ public class MarkovChainCreator {
     private String resultString;
     private ArrayList<String> possibilities;
     private StringBuffer sb;
-    private boolean doAgain;
     private String returnString;
 
     public MarkovChainCreator(InputStream file) {
@@ -55,20 +54,20 @@ public class MarkovChainCreator {
         returnString = generateTextHelper();
         while ((resultString.split(" ").length <= 1) || (resultString.split(" ").length > 280)) {
             returnString = generateTextHelper();
-            if ((resultString.split(" ").length <= 280) && (Math.random() < 0.05)) { // sometimes lets through one word outputs (5% of the times)
+            if ((resultString.split(" ").length <= 280) && (Math.random() < 0.1)) { // sometimes lets through one word outputs (10% of the times)
                 break;
             }
         }
-        return resultString;
+        return returnString;
     }
 
-    public String generateTextHelper() { // gives only one word pretty often
+    public String generateTextHelper() {
         currentString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
         resultString = currentString;
 
         while (resultString.length() <= maxLength) {
 
-            if (!wordMap.containsKey(currentString)) { //fixed nullPointerException
+            if (!wordMap.containsKey(currentString)) { //avoids nullPointerException in case of empty list
                 break;
             }
 
@@ -76,38 +75,33 @@ public class MarkovChainCreator {
             if (currentString.endsWith(".") || currentString.endsWith("?") || currentString.endsWith("!")) {
                 nextString = sentenceStarters.get((int)(Math.random() * sentenceStarters.size())); // get random sentence starter
             } else {
-                nextString = possibilities.get((int)(Math.random() * possibilities.size())); //väljer en random startare
+                nextString = possibilities.get((int)(Math.random() * possibilities.size())); //chooses a random out of possible next words
             }
 
             resultString += " " + nextString;
 
-            if (resultString.length() > maxLength) {
+            if (resultString.length() > maxLength) { // if over max length, break and the string will be re-done through the textGenerator method
                 break;
             }
 
             if ((resultString.endsWith(".") || resultString.endsWith("!") || resultString.endsWith("?")) && (Math.random() < 0.80)) { // 20% chance that it continues after one sentence
-                sb = new StringBuffer(resultString);
-                sb.deleteCharAt(sb.length() - 1);
-                resultString = sb.toString();
-                /*
-                if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
-                    return resultString;
-                } gets checked in textGenerator()*/
+                if (resultString.endsWith(".")) { // deletes punctuation in the end to fit tweet theme
+                    sb = new StringBuffer(resultString);
+                    sb.deleteCharAt(sb.length()-1);
+                    resultString = sb.toString();
+                }
                 break;
             }
 
             currentString = resultString.substring(resultString.lastIndexOf(" ") + 1);
         }
 
-        if (resultString.endsWith(".")) {
+        if (resultString.endsWith(".")) { // deletes punctuation in the end to fit tweet theme
             sb = new StringBuffer(resultString);
             sb.deleteCharAt(sb.length()-1);
             resultString = sb.toString();
         }
-        /*
-        if ((resultString.split(" ").length <= 1) && (Math.random() < 0.05)) { // 5% chans att man accepterar ett ord
-            return resultString;
-        } gets checked in textGenerator()*/
+
         return resultString;
     }
 }

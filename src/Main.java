@@ -11,13 +11,15 @@ public class Main {
         MarkovChainCreator markovChainCreator = new MarkovChainCreator(System.in);
         markovChainCreator.createMarkovChain();
         String markovString = markovChainCreator.generateText();
+        /* test:
+
         System.out.println(markovString);
 
         try {
             Files.write(Paths.get("file.txt"), markovString.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         for (int i = 1; i <= 100; i++) {
             markovString = markovChainCreator.generateText();
