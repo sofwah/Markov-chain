@@ -1,5 +1,5 @@
 //javac Main.java MarkovChainCreator.java
-//java Main < 1.in
+//java Main < unicorn.txt
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,11 +19,11 @@ public class Main {
             e.printStackTrace();
         }
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 100; i++) {
             markovString = markovChainCreator.generateText();
 
             try {
-                Files.write(Paths.get(i + ".txt"), markovString.getBytes());
+                Files.write(Paths.get("output/"+ i + ".txt"), markovString.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }
