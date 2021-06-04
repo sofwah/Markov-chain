@@ -21,7 +21,9 @@ public class Main {
             e.printStackTrace();
         }*/
 
-        for (int i = 1; i <= 100; i++) {
+        int nbrFiles = 500;
+
+        for (int i = 1; i <= nbrFiles; i++) {
             markovString = markovChainCreator.generateText();
 
             try {
