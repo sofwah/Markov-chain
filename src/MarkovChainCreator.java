@@ -34,7 +34,7 @@ public class MarkovChainCreator {
                 wordMap.get(firstWord).add(combinedWords);
 
                 if (firstWord.endsWith(".") || firstWord.endsWith("!") || firstWord.endsWith("?")) {
-                    sentenceStarters.add(secondWord); //om föregående ord slutar med punkt är nästa ord en meningsstartare
+                    sentenceStarters.add(secondWord); //if the previous word ends with .!? the next word is a sentence starter
                 } //this should maybe be moved to earlier in the loop
 
                 firstWord = thirdWord;
