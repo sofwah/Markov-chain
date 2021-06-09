@@ -4,18 +4,11 @@ import java.util.*;
 public class MarkovChainCreator {
     private Scanner scanner;
     private int maxLength = 280;
-    private String firstWord;
-    private String secondWord;
-    private String thirdWord;
-    private String combinedWords;
+    private String firstWord, secondWord, thirdWord, combinedWords, currentString, nextString, resultString, returnString;
     private Map<String, ArrayList<String>> wordMap = new HashMap<>(); // one word -> two words, the last out of the two words -> next two words, and so on
     private List<String> sentenceStarters = new ArrayList<>();
-    private String currentString;
-    private String nextString;
-    private String resultString;
     private ArrayList<String> possibilities;
     private StringBuffer sb;
-    private String returnString;
 
     public MarkovChainCreator(InputStream file) {
         scanner = new Scanner(file);
