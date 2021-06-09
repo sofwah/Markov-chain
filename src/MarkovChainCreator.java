@@ -8,7 +8,7 @@ public class MarkovChainCreator {
     private String secondWord;
     private String thirdWord;
     private String combinedWords;
-    private Map<String, ArrayList<String>> wordMap = new HashMap<>(); // ett ord -> två ord, det sista av de två orden -> nästa två ord, osv
+    private Map<String, ArrayList<String>> wordMap = new HashMap<>(); // one word -> two words, the last out of the two words -> next two words, and so on
     private List<String> sentenceStarters = new ArrayList<>();
     private String currentString;
     private String nextString;
