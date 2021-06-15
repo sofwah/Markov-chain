@@ -14,13 +14,17 @@ public class MarkovChainCreator {
         scanner = new Scanner(file);
     }
 
-    public void createMarkovChain() {
+    public void createMarkovChainOld() {
         firstWord = scanner.next();
 
-        while (scanner.hasNext()) {
+        if (scanner.hasNext()) {
             secondWord = scanner.next();
 
-            if (scanner.hasNext()) {
+            if (firstWord.endsWith(".") || firstWord.endsWith("!") || firstWord.endsWith("?")) { //needed in case first sentence is only one word
+                sentenceStarters.add(secondWord); //if the previous word ends with .!? the next word is a sentence starter
+            }
+
+            while (scanner.hasNext()) {
                 thirdWord = scanner.next();
                 if (secondWord.endsWith(".") || secondWord.endsWith("!") || secondWord.endsWith("?")) {
                     combinedWords = secondWord;
@@ -33,14 +37,47 @@ public class MarkovChainCreator {
                 }
                 wordMap.get(firstWord).add(combinedWords);
 
-                if (firstWord.endsWith(".") || firstWord.endsWith("!") || firstWord.endsWith("?")) {
-                    sentenceStarters.add(secondWord); //if the previous word ends with .!? the next word is a sentence starter
-                } //this should maybe be moved to earlier in the loop
+                if (secondWord.endsWith(".") || secondWord.endsWith("!") || secondWord.endsWith("?")) {
+                    sentenceStarters.add(thirdWord); //if the previous word ends with .!? the next word is a sentence starter
+                }
 
-                firstWord = thirdWord;
+                firstWord = secondWord;
+                secondWord = thirdWord;
             }
         }
-        //the above loop is currently after each loop giving firstWord the value of thirdWord, could be changed to secondWord to get a better chain and more keys in the map
+    }
+
+    public void createMarkovChain() {
+        firstWord = scanner.next();
+
+        if (scanner.hasNext()) { //previously while loop
+            secondWord = scanner.next();
+
+            if (firstWord.endsWith(".") || firstWord.endsWith("!") || firstWord.endsWith("?")) { //needed in case first sentence is only one word, recently added with the other changes
+                sentenceStarters.add(secondWord); //if the previous word ends with .!? the next word is a sentence starter
+            }
+
+            while (scanner.hasNext()) { //previously if statement
+                thirdWord = scanner.next();
+                if (secondWord.endsWith(".") || secondWord.endsWith("!") || secondWord.endsWith("?")) {
+                    combinedWords = secondWord;
+                } else {
+                    combinedWords = secondWord + " " + thirdWord;
+                }
+
+                if (!wordMap.containsKey(firstWord)) {
+                    wordMap.put(firstWord, new ArrayList<>());
+                }
+                wordMap.get(firstWord).add(combinedWords);
+
+                if (secondWord.endsWith(".") || secondWord.endsWith("!") || secondWord.endsWith("?")) { //previously firstWord
+                    sentenceStarters.add(thirdWord); //if the previous word ends with .!? the next word is a sentence starter, prev secondWord
+                }
+
+                firstWord = secondWord; //previously firstWord = thirdWord
+                secondWord = thirdWord;
+            }
+        }
     }
 
     public String generateText() {
